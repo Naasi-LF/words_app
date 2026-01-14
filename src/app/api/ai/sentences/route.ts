@@ -3,7 +3,7 @@ import { generateSentencesStream } from "@/services/gemini";
 // 流式生成例句
 export async function POST(request: Request) {
     try {
-        const { words } = await request.json();
+        const { words, type } = await request.json();
 
         if (!words || !Array.isArray(words) || words.length === 0) {
             return new Response(JSON.stringify({ error: "Words array is required" }), {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         const stream = new ReadableStream({
             async start(controller) {
                 try {
-                    for await (const chunk of generateSentencesStream(words)) {
+                    for await (const chunk of generateSentencesStream(words, type)) {
                         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: chunk })}\n\n`));
                     }
                     controller.enqueue(encoder.encode("data: [DONE]\n\n"));

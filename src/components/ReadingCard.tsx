@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, TouchEvent } from "react";
+import { useState, useEffect, TouchEvent, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -21,6 +21,7 @@ export default function ReadingCard({ words, currentIndex, onIndexChange }: Read
     const [isFlipped, setIsFlipped] = useState(false);
     const [touchStart, setTouchStart] = useState<number | null>(null);
     const [touchEnd, setTouchEnd] = useState<number | null>(null);
+    const [isSpeaking, setIsSpeaking] = useState(false);
 
     const currentWord = words[currentIndex];
     const minSwipeDistance = 50;
@@ -28,6 +29,34 @@ export default function ReadingCard({ words, currentIndex, onIndexChange }: Read
     useEffect(() => {
         setIsFlipped(false);
     }, [currentIndex]);
+
+    // 语音朗读单词
+    const speakWord = useCallback((text: string) => {
+        if (typeof window === "undefined" || !window.speechSynthesis) return;
+
+        // 停止之前的朗读
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+
+        window.speechSynthesis.speak(utterance);
+    }, []);
+
+    const handleCardClick = () => {
+        // 朗读单词
+        if (currentWord) {
+            speakWord(currentWord.text);
+        }
+        // 翻转卡片
+        setIsFlipped(!isFlipped);
+    };
 
     const onTouchStart = (e: TouchEvent) => {
         setTouchEnd(null);
@@ -93,19 +122,33 @@ export default function ReadingCard({ words, currentIndex, onIndexChange }: Read
 
             {/* Card */}
             <Card
-                className="w-full max-w-md h-[50vh] cursor-pointer transition-all duration-300 hover:shadow-2xl bg-gradient-to-br from-white to-peach/20 border-2 border-peach/30 rounded-3xl flex flex-col justify-center items-center p-8"
-                onClick={() => setIsFlipped(!isFlipped)}
+                className="w-full max-w-md h-[50vh] cursor-pointer transition-all duration-300 hover:shadow-2xl bg-gradient-to-br from-white to-peach/20 border-2 border-peach/30 rounded-3xl flex flex-col justify-center items-center p-8 relative"
+                onClick={handleCardClick}
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
             >
+                {/* Speaker Icon */}
+                <button
+                    className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all ${isSpeaking
+                            ? "bg-coral text-white animate-pulse"
+                            : "bg-peach/30 text-coral hover:bg-peach/50"
+                        }`}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (currentWord) speakWord(currentWord.text);
+                    }}
+                >
+                    🔊
+                </button>
+
                 <div className="text-center">
                     {!isFlipped ? (
                         <div className="animate-bounce-soft">
                             <span className="text-4xl md:text-5xl font-bold text-foreground">
                                 {currentWord.text}
                             </span>
-                            <p className="text-sm text-muted-foreground mt-6">点击卡片查看中文 👆</p>
+                            <p className="text-sm text-muted-foreground mt-6">点击卡片查看中文 🔊</p>
                         </div>
                     ) : (
                         <div>
@@ -144,7 +187,7 @@ export default function ReadingCard({ words, currentIndex, onIndexChange }: Read
 
             {/* Swipe Hint */}
             <p className="text-xs text-muted-foreground text-center">
-                💡 左右滑动或点击按钮切换单词
+                💡 左右滑动切换 · 点击卡片朗读并翻转
             </p>
         </div>
     );

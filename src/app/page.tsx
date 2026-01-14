@@ -10,6 +10,7 @@ interface Word {
   text: string;
   translation: string;
   stage: number;
+  detail?: string;
   nextReviewDate: string;
 }
 
@@ -88,6 +89,7 @@ export default function HomePage() {
                 text={word.text}
                 translation={word.translation}
                 stage={word.stage}
+                detail={word.detail}
                 onDelete={handleDelete}
               />
             ))}

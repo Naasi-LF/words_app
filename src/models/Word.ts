@@ -5,6 +5,7 @@ export interface IWord {
     translation: string;
     stage: number;
     nextReviewDate: Date;
+    detail?: string;  // 联想记忆详情
     createdAt: Date;
 }
 
@@ -31,6 +32,10 @@ const WordSchema = new Schema<IWordDocument>(
         nextReviewDate: {
             type: Date,
             default: () => new Date(),
+        },
+        detail: {
+            type: String,
+            default: "",
         },
     },
     {
