@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         const stream = new ReadableStream({
             async start(controller) {
                 try {
-                    for await (const chunk of generateSentencesStream(words, type)) {
+                    for await (const chunk of generateSentencesStream(words)) {
                         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: chunk })}\n\n`));
                     }
                     controller.enqueue(encoder.encode("data: [DONE]\n\n"));
