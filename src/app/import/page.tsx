@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -43,13 +42,13 @@ export default function ImportPage() {
 
             if (data.error) {
                 console.error("API Error:", data.error);
-                alert("提取失败: " + data.error);
+                alert("Extraction failed: " + data.error);
                 return;
             }
 
             if (!Array.isArray(data)) {
                 console.error("Invalid response:", data);
-                alert("AI 返回格式错误，请重试");
+                alert("AI format error, please try again");
                 return;
             }
 
@@ -61,7 +60,7 @@ export default function ImportPage() {
             );
         } catch (error) {
             console.error("Failed to extract words:", error);
-            alert("网络错误，请重试");
+            alert("Network error, please try again");
         } finally {
             setIsExtracting(false);
         }
@@ -106,7 +105,7 @@ export default function ImportPage() {
     // 手动添加单词
     const handleManualAdd = async () => {
         if (!manualWord.trim() || !manualTranslation.trim()) {
-            alert("请输入单词和中文释义");
+            alert("Please enter both word and translation");
             return;
         }
 
@@ -126,7 +125,7 @@ export default function ImportPage() {
             setTimeout(() => setSavedCount(0), 3000);
         } catch (error) {
             console.error("Failed to add word:", error);
-            alert("添加失败，请重试");
+            alert("Failed to add word, please try again");
         } finally {
             setIsSaving(false);
         }
@@ -135,159 +134,180 @@ export default function ImportPage() {
     const selectedCount = extractedWords.filter((w) => w.selected).length;
 
     return (
-        <div className="container mx-auto px-4 py-6 max-w-4xl">
-            {/* Header */}
-            <div className="text-center mb-6">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-coral to-cute-red bg-clip-text text-transparent">
-                    ✨ 添加单词
-                </h1>
-                <p className="text-muted-foreground mt-2">AI 提取或手动输入</p>
-            </div>
+        <div className="min-h-screen pb-32 pt-8">
+            {/* Background Elements */}
+            <div className="fixed top-0 left-0 w-full h-64 bg-gradient-to-b from-primary/5 to-transparent -z-10" />
 
-            {/* Tab Switcher */}
-            <div className="flex justify-center gap-2 mb-6">
-                <Button
-                    variant={activeTab === "ai" ? "default" : "outline"}
-                    className={`rounded-full px-6 ${activeTab === "ai" ? "bg-gradient-to-r from-coral to-cute-red" : "border-peach"}`}
-                    onClick={() => setActiveTab("ai")}
-                >
-                    🤖 AI 提取
-                </Button>
-                <Button
-                    variant={activeTab === "manual" ? "default" : "outline"}
-                    className={`rounded-full px-6 ${activeTab === "manual" ? "bg-gradient-to-r from-coral to-cute-red" : "border-peach"}`}
-                    onClick={() => setActiveTab("manual")}
-                >
-                    ✏️ 手动输入
-                </Button>
-            </div>
-
-            {/* Success Message */}
-            {savedCount > 0 && (
-                <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-2xl text-center animate-bounce-soft">
-                    🎉 成功添加 {savedCount} 个单词！
+            <div className="container mx-auto px-4 max-w-4xl">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-serif font-bold text-foreground">
+                        Add New Words
+                    </h1>
+                    <p className="text-muted-foreground mt-2">Grow your vocabulary garden</p>
                 </div>
-            )}
 
-            {activeTab === "manual" ? (
-                /* Manual Input */
-                <Card className="p-6 bg-gradient-to-br from-white to-peach/10 border-2 border-peach/30 rounded-2xl max-w-md mx-auto">
-                    <h3 className="text-lg font-medium text-foreground mb-4 text-center">
-                        ✏️ 手动添加单词
-                    </h3>
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-sm text-muted-foreground mb-1 block">英文单词</label>
-                            <Input
-                                placeholder="例如: serendipity"
-                                value={manualWord}
-                                onChange={(e) => setManualWord(e.target.value)}
-                                className="border-peach/30 focus:border-coral rounded-xl"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-sm text-muted-foreground mb-1 block">中文释义</label>
-                            <Input
-                                placeholder="例如: 意外发现美好事物的运气"
-                                value={manualTranslation}
-                                onChange={(e) => setManualTranslation(e.target.value)}
-                                className="border-peach/30 focus:border-coral rounded-xl"
-                            />
-                        </div>
-                        <Button
-                            className="w-full rounded-full bg-gradient-to-r from-coral to-cute-red hover:opacity-90"
-                            onClick={handleManualAdd}
-                            disabled={isSaving || !manualWord.trim() || !manualTranslation.trim()}
-                        >
-                            {isSaving ? "💾 保存中..." : "💾 添加单词"}
-                        </Button>
+                {/* Tab Switcher */}
+                <div className="flex justify-center gap-4 mb-8">
+                    <button
+                        onClick={() => setActiveTab("ai")}
+                        className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${activeTab === "ai"
+                                ? "bg-primary text-white shadow-glow transform scale-105"
+                                : "bg-white text-muted-foreground border border-border/50 hover:bg-secondary/20"
+                            }`}
+                    >
+                        🤖 AI Extract
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("manual")}
+                        className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${activeTab === "manual"
+                                ? "bg-primary text-white shadow-glow transform scale-105"
+                                : "bg-white text-muted-foreground border border-border/50 hover:bg-secondary/20"
+                            }`}
+                    >
+                        ✏️ Manual Input
+                    </button>
+                </div>
+
+                {/* Success Message */}
+                {savedCount > 0 && (
+                    <div className="mb-6 p-4 bg-green-50 text-green-700 border border-green-200 rounded-2xl text-center animate-bounce-soft shadow-sm max-w-md mx-auto">
+                        🎉 Successfully added <span className="font-bold">{savedCount}</span> words!
                     </div>
-                </Card>
-            ) : (
-                /* AI Extract */
-                <div className="grid md:grid-cols-2 gap-6">
-                    {/* Input Area */}
-                    <Card className="p-4 bg-gradient-to-br from-white to-peach/10 border-2 border-peach/30 rounded-2xl">
-                        <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                            📄 粘贴文章
-                        </h3>
-                        <Textarea
-                            placeholder="在这里粘贴英文文章..."
-                            className="min-h-[300px] resize-none border-peach/30 focus:border-coral rounded-xl"
-                            value={articleText}
-                            onChange={(e) => setArticleText(e.target.value)}
-                        />
-                        <Button
-                            className="w-full mt-4 rounded-full bg-gradient-to-r from-coral to-cute-red hover:opacity-90"
-                            onClick={handleExtract}
-                            disabled={isExtracting || !articleText.trim()}
-                        >
-                            {isExtracting ? "🔍 提取中..." : "🔍 AI 提取单词"}
-                        </Button>
-                    </Card>
+                )}
 
-                    {/* Extracted Words */}
-                    <Card className="p-4 bg-gradient-to-br from-white to-peach/10 border-2 border-peach/30 rounded-2xl">
-                        <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-sm font-medium text-muted-foreground">
-                                📚 提取结果
+                {activeTab === "manual" ? (
+                    /* Manual Input */
+                    <div className="glass-card p-8 rounded-3xl max-w-md mx-auto animate-in slide-in-from-bottom-4 duration-500">
+                        <h3 className="text-lg font-bold text-foreground mb-6 text-center flex items-center justify-center gap-2">
+                            <span>✏️</span> Quick Add
+                        </h3>
+                        <div className="space-y-5">
+                            <div>
+                                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block">English Word</label>
+                                <Input
+                                    placeholder="e.g. serendipity"
+                                    value={manualWord}
+                                    onChange={(e) => setManualWord(e.target.value)}
+                                    className="h-12 rounded-xl border-border/50 focus:border-primary focus:ring-primary/20 bg-secondary/10"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Translation</label>
+                                <Input
+                                    placeholder="e.g. 意外发现美好事物的运气"
+                                    value={manualTranslation}
+                                    onChange={(e) => setManualTranslation(e.target.value)}
+                                    className="h-12 rounded-xl border-border/50 focus:border-primary focus:ring-primary/20 bg-secondary/10"
+                                />
+                            </div>
+                            <Button
+                                className="w-full h-12 rounded-full bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 text-lg font-bold transition-all hover:scale-[1.02]"
+                                onClick={handleManualAdd}
+                                disabled={isSaving || !manualWord.trim() || !manualTranslation.trim()}
+                            >
+                                {isSaving ? "Saving..." : "Save Word"}
+                            </Button>
+                        </div>
+                    </div>
+                ) : (
+                    /* AI Extract */
+                    <div className="grid md:grid-cols-2 gap-6 animate-in slide-in-from-bottom-4 duration-500">
+                        {/* Input Area */}
+                        <div className="glass-card p-6 rounded-3xl flex flex-col h-[500px]">
+                            <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <span>📄</span> Paste Article
                             </h3>
-                            {extractedWords.length > 0 && (
-                                <Badge className="bg-coral/10 text-coral">
-                                    已选 {selectedCount}/{extractedWords.length}
-                                </Badge>
-                            )}
+                            <Textarea
+                                placeholder="Paste an English article or text here..."
+                                className="flex-1 resize-none border-border/50 focus:border-primary focus:ring-primary/20 bg-secondary/10 rounded-xl p-4 leading-relaxed"
+                                value={articleText}
+                                onChange={(e) => setArticleText(e.target.value)}
+                            />
+                            <Button
+                                className="w-full mt-4 h-12 rounded-full bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 font-bold transition-all hover:scale-[1.02]"
+                                onClick={handleExtract}
+                                disabled={isExtracting || !articleText.trim()}
+                            >
+                                {isExtracting ? (
+                                    <span className="flex items-center gap-2">
+                                        <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                                        Extracting...
+                                    </span>
+                                ) : (
+                                    "✨ Extract Words with AI"
+                                )}
+                            </Button>
                         </div>
 
-                        <ScrollArea className="h-[300px]">
-                            {extractedWords.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                                    <span className="text-4xl mb-4">🌟</span>
-                                    <p>提取的单词会显示在这里</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-2">
-                                    {extractedWords.map((word, index) => (
-                                        <div
-                                            key={index}
-                                            className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${word.selected
-                                                    ? "bg-coral/10 border-2 border-coral/30"
-                                                    : "bg-gray-50 border-2 border-transparent opacity-50"
-                                                }`}
-                                            onClick={() => toggleWord(index)}
-                                        >
-                                            <div className="flex items-center justify-between">
-                                                <span className="font-medium text-foreground">
-                                                    {word.text}
-                                                </span>
-                                                <span
-                                                    className={`text-lg ${word.selected ? "opacity-100" : "opacity-30"
-                                                        }`}
-                                                >
-                                                    {word.selected ? "✅" : "⭕"}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm text-muted-foreground mt-1">
-                                                {word.translation}
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </ScrollArea>
+                        {/* Extracted Words */}
+                        <div className="glass-card p-6 rounded-3xl flex flex-col h-[500px]">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                                    <span>📚</span> Results
+                                </h3>
+                                {extractedWords.length > 0 && (
+                                    <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                                        Selected {selectedCount}/{extractedWords.length}
+                                    </Badge>
+                                )}
+                            </div>
 
-                        {extractedWords.length > 0 && (
-                            <Button
-                                className="w-full mt-4 rounded-full bg-gradient-to-r from-coral to-cute-red hover:opacity-90"
-                                onClick={handleSave}
-                                disabled={isSaving || selectedCount === 0}
-                            >
-                                {isSaving ? "💾 保存中..." : `💾 保存 ${selectedCount} 个单词`}
-                            </Button>
-                        )}
-                    </Card>
-                </div>
-            )}
+                            <ScrollArea className="flex-1 pr-4 -mr-4">
+                                {extractedWords.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center h-[350px] text-muted-foreground text-center p-8 border-2 border-dashed border-border/50 rounded-2xl">
+                                        <span className="text-5xl mb-4 grayscale opacity-30">✨</span>
+                                        <p className="font-medium">AI Suggestions will appear here</p>
+                                        <p className="text-sm mt-2 opacity-60">Paste text on the left to start</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {extractedWords.map((word, index) => (
+                                            <div
+                                                key={index}
+                                                className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border group ${word.selected
+                                                        ? "bg-white border-primary/30 shadow-sm"
+                                                        : "bg-secondary/20 border-transparent opacity-60 hover:opacity-100"
+                                                    }`}
+                                                onClick={() => toggleWord(index)}
+                                            >
+                                                <div className="flex items-center justify-between pointer-events-none">
+                                                    <div>
+                                                        <span className={`font-bold text-lg ${word.selected ? "text-foreground" : "text-muted-foreground"}`}>
+                                                            {word.text}
+                                                        </span>
+                                                        <p className="text-sm text-muted-foreground mt-0.5">
+                                                            {word.translation}
+                                                        </p>
+                                                    </div>
+                                                    <div
+                                                        className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all ${word.selected
+                                                                ? "bg-primary border-primary text-white"
+                                                                : "bg-transparent border-border text-transparent group-hover:border-primary/50"
+                                                            }`}
+                                                    >
+                                                        ✓
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </ScrollArea>
+
+                            {extractedWords.length > 0 && (
+                                <Button
+                                    className="w-full mt-4 h-12 rounded-full bg-gradient-to-r from-primary to-coral shadow-lg shadow-primary/20 font-bold transition-all hover:scale-[1.02]"
+                                    onClick={handleSave}
+                                    disabled={isSaving || selectedCount === 0}
+                                >
+                                    {isSaving ? "Saving..." : `Save ${selectedCount} Words`}
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

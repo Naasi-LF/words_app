@@ -34,31 +34,36 @@ export default function ReadingPage() {
         return (
             <div className="flex items-center justify-center min-h-[80vh]">
                 <div className="text-center">
-                    <span className="text-6xl animate-bounce-soft inline-block">👀</span>
-                    <p className="text-muted-foreground mt-4">加载中...</p>
+                    <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-muted-foreground animate-pulse">Loading reading mode...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="container mx-auto px-4 py-6 max-w-4xl">
-            {/* Header */}
-            <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-coral to-cute-red bg-clip-text text-transparent">
-                    👀 阅览模式
-                </h1>
-                <p className="text-muted-foreground mt-2">
-                    左右滑动切换单词
-                </p>
-            </div>
+        <div className="min-h-screen pb-32 pt-8">
+            {/* Background Elements */}
+            <div className="fixed top-0 left-0 w-full h-64 bg-gradient-to-b from-primary/5 to-transparent -z-10" />
 
-            {/* Reading Card */}
-            <ReadingCard
-                words={words}
-                currentIndex={currentIndex}
-                onIndexChange={setCurrentIndex}
-            />
+            <div className="container mx-auto px-4 max-w-4xl">
+                {/* Header */}
+                <div className="text-center mb-10">
+                    <h1 className="text-3xl font-serif font-bold text-foreground">
+                        Reading Mode
+                    </h1>
+                    <p className="text-muted-foreground mt-2">
+                        Focus flow · Swipe to navigate
+                    </p>
+                </div>
+
+                {/* Reading Card */}
+                <ReadingCard
+                    words={words}
+                    currentIndex={currentIndex}
+                    onIndexChange={setCurrentIndex}
+                />
+            </div>
         </div>
     );
 }
