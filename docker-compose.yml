@@ -6,7 +6,7 @@ services:
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/aivocab
       - GEMINI_API_KEY=${GEMINI_API_KEY:-AIzaSyB0zkfWR-YduiDKPXsoV-NRRQMfU7fC3fU}
-      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash-lite-preview-09-2025}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash-lite}
     depends_on:
       mongodb:
         condition: service_healthy
