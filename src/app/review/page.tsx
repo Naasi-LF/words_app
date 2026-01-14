@@ -272,17 +272,21 @@ export default function ReviewPage() {
 
                         {/* AI Sentences / Memory Context */}
                         <div className="flex flex-col gap-4 w-full h-full">
-                            <div className="glass-card rounded-3xl p-6 flex flex-col h-full min-h-[400px]">
-                                <div className="flex items-center justify-between mb-4">
+                            <div className="glass-card rounded-3xl p-6 flex flex-col h-full min-h-[400px] border border-white/40 shadow-soft bg-white/60 relative overflow-hidden">
+                                {/* Decorative elements */}
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -z-10" />
+                                <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl -z-10" />
+
+                                <div className="flex items-center justify-between mb-6 z-10">
                                     <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                                        <span>📝</span> AI Context
+                                        <span className="text-lg">📝</span> AI Context
                                     </h3>
                                     <div className="flex gap-2">
                                         <Button
                                             size="sm"
                                             variant="outline"
                                             onClick={() => setShowAssociation(true)}
-                                            className="h-8 rounded-full text-xs font-bold"
+                                            className="h-8 rounded-full text-xs font-bold bg-white/50 hover:bg-white/80 border-primary/20 text-primary"
                                         >
                                             💡 Hint
                                         </Button>
@@ -290,32 +294,50 @@ export default function ReviewPage() {
                                             size="sm"
                                             onClick={generateSentences}
                                             disabled={isGenerating}
-                                            className="h-8 rounded-full text-xs font-bold bg-secondary hover:bg-secondary/80 text-foreground"
+                                            className="h-8 rounded-full text-xs font-bold bg-secondary hover:bg-secondary/80 text-foreground shadow-sm"
                                         >
-                                            {isGenerating ? "..." : "✨ Example"}
+                                            {isGenerating ? "..." : (sentences ? "🔄 Regenerate" : "✨ Example")}
                                         </Button>
                                     </div>
                                 </div>
 
                                 <ScrollArea className="flex-1 -mr-3 pr-3" ref={sentencesRef}>
                                     {sentences ? (
-                                        <div className="prose prose-sm prose-p:text-foreground/90 prose-p:leading-relaxed">
-                                            <pre className="whitespace-pre-wrap font-sans text-sm">
-                                                {sentences}
-                                            </pre>
+                                        <div className="space-y-4">
+                                            {sentences.split('\n').filter(line => line.trim()).map((line, i) => {
+                                                // Function to highlight the current word case-insensitively
+                                                const parts = line.split(new RegExp(`(${currentWord.text})`, 'gi'));
+                                                return (
+                                                    <div key={i} className="p-4 rounded-2xl bg-white/50 border border-white/20 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-backwards" style={{ animationDelay: `${i * 100}ms` }}>
+                                                        <p className="text-foreground/90 leading-relaxed font-serif text-lg">
+                                                            {parts.map((part, index) =>
+                                                                part.toLowerCase() === currentWord.text.toLowerCase() ? (
+                                                                    <span key={index} className="text-primary font-bold bg-primary/10 px-1 rounded mx-0.5 box-decoration-clone">
+                                                                        {part}
+                                                                    </span>
+                                                                ) : (
+                                                                    <span key={index}>{part}</span>
+                                                                )
+                                                            )}
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     ) : (
                                         <div className="flex flex-col items-center justify-center h-[200px] text-muted-foreground text-center opacity-60">
-                                            <span className="text-4xl mb-3">💭</span>
-                                            <p className="text-sm">Tap "Example" for sentences or "Hint" for memory aids.</p>
+                                            <span className="text-5xl mb-4 grayscale opacity-50">💭</span>
+                                            <p className="text-sm font-medium">Tap "Example" for sentences or "Hint" for memory aids.</p>
                                         </div>
                                     )}
                                     {isGenerating && (
-                                        <div className="flex items-center gap-1 mt-2 text-xs text-primary font-medium animate-pulse">
-                                            <span>Writing</span>
-                                            <span className="w-1 h-1 bg-primary rounded-full animate-bounce" />
-                                            <span className="w-1 h-1 bg-primary rounded-full animate-bounce delay-100" />
-                                            <span className="w-1 h-1 bg-primary rounded-full animate-bounce delay-200" />
+                                        <div className="flex items-center gap-2 mt-4 text-xs text-primary font-medium bg-primary/5 p-3 rounded-xl w-fit mx-auto">
+                                            <div className="flex gap-1">
+                                                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" />
+                                                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce delay-100" />
+                                                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce delay-200" />
+                                            </div>
+                                            <span>AI is thinking...</span>
                                         </div>
                                     )}
                                 </ScrollArea>

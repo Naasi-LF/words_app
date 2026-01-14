@@ -135,8 +135,8 @@ export default function AssociationModal({
                     size="sm"
                     variant={imported ? "outline" : "default"}
                     className={`ml-2 h-7 px-3 rounded-full text-[10px] font-medium tracking-wide transition-all ${imported
-                            ? "bg-green-100 text-green-700 border-green-200"
-                            : "bg-primary text-primary-foreground shadow-glow hover:shadow-lg hover:scale-105"
+                        ? "bg-green-100 text-green-700 border-green-200"
+                        : "bg-primary text-primary-foreground shadow-glow hover:shadow-lg hover:scale-105"
                         }`}
                     onClick={() => handleImportWord(item)}
                     disabled={imported}
@@ -262,15 +262,13 @@ export default function AssociationModal({
                 {/* Footer */}
                 {data && (
                     <div className="p-4 border-t border-border/50 bg-white/50 backdrop-blur-sm flex gap-3 shrink-0">
-                        {!savedDetail && (
-                            <Button
-                                variant="ghost"
-                                className="flex-1 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5"
-                                onClick={fetchAssociation}
-                            >
-                                🔄 Regenerate
-                            </Button>
-                        )}
+                        <Button
+                            variant="ghost"
+                            className="flex-1 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5"
+                            onClick={fetchAssociation}
+                        >
+                            🔄 Regenerate
+                        </Button>
                         <Button
                             className="flex-[2] rounded-xl bg-gradient-to-r from-primary to-coral shadow-lg shadow-primary/25 hover:shadow-xl hover:scale-[1.02] transition-all"
                             onClick={onClose}
