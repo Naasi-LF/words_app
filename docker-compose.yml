@@ -5,9 +5,9 @@ services:
       - "3000:3000"
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/aivocab
-      - OPENAI_API_KEY=sk-CcX5M9fKqXfmG44jCpGBj7sJVNHlk6sQ9oCp5O1RQs6DmcEI
-      - OPENAI_MODEL=gpt-5-mini
-      - OPENAI_BASE_URL=https://api.openai-proxy.org/v1
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
     depends_on:
       mongodb:
         condition: service_healthy
