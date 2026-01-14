@@ -1,13 +1,15 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI, RequestOptions } from "@google/generative-ai";
 
-const API_KEY = process.env.OPENAI_API_KEY || "";
-const MODEL_NAME = process.env.OPENAI_MODEL || "gpt-4o-mini";
-const BASE_URL = process.env.OPENAI_BASE_URL || "https://api.openai.com/v1";
+const API_KEY = process.env.GEMINI_API_KEY || "";
+const MODEL_NAME = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
+const BASE_URL = process.env.GEMINI_BASE_URL || "";
 
-const openai = new OpenAI({
-    apiKey: API_KEY,
-    baseURL: BASE_URL,
-});
+const genAI = new GoogleGenerativeAI(API_KEY);
+
+// 使用代理 URL (如果有配置)
+const requestOptions: RequestOptions = BASE_URL ? { baseUrl: BASE_URL } : {};
+
+export const geminiModel = genAI.getGenerativeModel({ model: MODEL_NAME }, requestOptions);
 
 /**
  * 从文章中提取高频词汇
@@ -28,13 +30,10 @@ ${text}
 [{"text": "英文单词", "translation": "中文释义"}]`;
 
     try {
-        const completion = await openai.chat.completions.create({
-            model: MODEL_NAME,
-            messages: [{ role: "user", content: prompt }],
-        });
+        const result = await geminiModel.generateContent(prompt);
+        const response = result.response.text();
 
-        const response = completion.choices[0]?.message?.content || "";
-        console.log("OpenAI raw response:", response);
+        console.log("Gemini raw response:", response);
 
         let jsonStr = response;
 
@@ -57,7 +56,7 @@ ${text}
 
         return parsed;
     } catch (error) {
-        console.error("OpenAI extract error:", error);
+        console.error("Gemini extract error:", error);
         throw new Error(`Failed to extract words: ${error}`);
     }
 }
@@ -95,12 +94,9 @@ export async function getWordAssociations(word: string): Promise<{
 每个类别提供2-4个词即可。`;
 
     try {
-        const completion = await openai.chat.completions.create({
-            model: MODEL_NAME,
-            messages: [{ role: "user", content: prompt }],
-        });
+        const result = await geminiModel.generateContent(prompt);
+        const response = result.response.text();
 
-        const response = completion.choices[0]?.message?.content || "";
         console.log("Association raw response:", response);
 
         let jsonStr = response;
@@ -141,21 +137,12 @@ export async function* generateSentencesStream(words: string[]): AsyncGenerator<
 
 请开始：`;
 
-    try {
-        const stream = await openai.chat.completions.create({
-            model: MODEL_NAME,
-            messages: [{ role: "user", content: prompt }],
-            stream: true,
-        });
+    const result = await geminiModel.generateContentStream(prompt);
 
-        for await (const chunk of stream) {
-            const content = chunk.choices[0]?.delta?.content;
-            if (content) {
-                yield content;
-            }
+    for await (const chunk of result.stream) {
+        const text = chunk.text();
+        if (text) {
+            yield text;
         }
-    } catch (error) {
-        console.error("Stream error:", error);
-        throw error;
     }
 }
