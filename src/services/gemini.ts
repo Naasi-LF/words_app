@@ -86,12 +86,13 @@ export async function getWordAssociations(word: string): Promise<{
     {"text": "同源派生词2", "translation": "中文释义"}
   ],
   "similar": [
-    {"text": "形近词1", "translation": "中文释义（注意区分）"},
-    {"text": "形近词2", "translation": "中文释义（注意区分）"}
+    {"text": "形近词1", "translation": "中文释义（绝对不要包含括号解释形近等信息，只要中文意思）"},
+    {"text": "形近词2", "translation": "中文释义（绝对不要包含括号解释形近等信息，只要中文意思）"}
   ]
 }
 
-每个类别提供2-4个词即可。`;
+每个类别提供高频关联词若干。
+特别强调：任何中文释义中都不要包含括号进行解释（如“形近”、“注意混淆”等），只把这些词展示出来即可，确保界面整洁，有时候中文释义也可以有若干个`;
 
     try {
         const completion = await openai.chat.completions.create({
