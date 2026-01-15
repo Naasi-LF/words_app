@@ -11,11 +11,17 @@ export async function PATCH(request: Request, context: RouteContext) {
     try {
         await connectToDatabase();
         const { id } = await context.params;
-        const { detail } = await request.json();
+        const { detail, text, translation } = await request.json();
+
+        // Build update object based on provided fields
+        const updateData: any = {};
+        if (detail !== undefined) updateData.detail = detail;
+        if (text !== undefined) updateData.text = text;
+        if (translation !== undefined) updateData.translation = translation;
 
         const word = await Word.findByIdAndUpdate(
             id,
-            { detail },
+            updateData,
             { new: true }
         );
 
